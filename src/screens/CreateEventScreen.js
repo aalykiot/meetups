@@ -1,6 +1,14 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { Input, Button } from 'react-native-elements';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  FlatList,
+} from 'react-native';
+import { Input, Button, ListItem } from 'react-native-elements';
+import DateTimePicker from 'react-native-modal-datetime-picker';
+import moment from 'moment';
 
 class CreateEventScreen extends Component {
   static navigationOptions = {
@@ -10,16 +18,35 @@ class CreateEventScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      isDateTimePickerVisible: false,
       title: '',
       description: '',
       location: '',
-      date: '',
-      time: '',
+      date: undefined,
       invites: [],
     };
   }
 
+  addUserToInvites = user => {
+    const { invites } = this.state;
+    const alreadyInvited = invites.some(item => item.id === user.id);
+
+    if (!alreadyInvited) {
+      this.setState(prevState => ({
+        invites: [...prevState.invites, user],
+      }));
+    } else {
+      this.setState(prevState => ({
+        invites: prevState.invites.filter(item => item.id !== user.id),
+      }));
+    }
+  };
+
   render() {
+    const txt = this.state.date
+      ? this.state.date.toString()
+      : 'Add date and starting time';
+
     return (
       <View style={styles.container}>
         <Input
@@ -41,18 +68,60 @@ class CreateEventScreen extends Component {
           onChangeText={location => this.setState({ location })}
         />
 
-        <TouchableOpacity>
-          <Text style={styles.link}>Add date and starting time</Text>
+        <TouchableOpacity
+          onPress={() => this.setState({ isDateTimePickerVisible: true })}
+        >
+          <Text style={styles.link}>{txt}</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity>
+        <TouchableOpacity
+          onPress={() =>
+            this.props.navigation.navigate('InvitePeople', {
+              invites: this.state.invites,
+              addUserToInvites: this.addUserToInvites,
+            })
+          }
+        >
           <Text style={styles.link}>Invite people</Text>
         </TouchableOpacity>
+
+        <FlatList
+          data={this.state.invites}
+          renderItem={({ item }) => (
+            <ListItem
+              key={item.id}
+              title={item.fullName}
+              subtitle={item.email}
+              leftIcon={{
+                name: 'md-checkmark-circle-outline',
+                type: 'ionicon',
+                size: 35,
+                color: '#e74c3c',
+              }}
+            />
+          )}
+          style={{
+            flex: 1,
+            paddingLeft: 10,
+            paddingRight: 10,
+            paddingBottom: 5,
+          }}
+        />
 
         <Button
           title="Create the event"
           buttonStyle={styles.button}
           containerStyle={styles.buttonContainer}
+        />
+        <DateTimePicker
+          isVisible={this.state.isDateTimePickerVisible}
+          mode="datetime"
+          minimumDate={new Date()}
+          onConfirm={date => this.setState({ date })}
+          onHideAfterConfirm={() =>
+            this.setState({ isDateTimePickerVisible: false })
+          }
+          onCancel={() => this.setState({ isDateTimePickerVisible: false })}
         />
       </View>
     );
@@ -61,6 +130,7 @@ class CreateEventScreen extends Component {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     paddingTop: 20,
   },
   input: {
@@ -75,6 +145,7 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: '#e74c3c',
     padding: 15,
+    marginBottom: 20,
   },
   buttonContainer: {
     width: '100%',

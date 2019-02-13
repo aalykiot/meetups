@@ -3,6 +3,7 @@ import { createAppContainer, createStackNavigator } from 'react-navigation';
 
 import EventsScreen from './EventsScreen';
 import CreateEventScreen from './CreateEventScreen';
+import InvitePeopleScreen from './InvitePeopleScreen';
 
 import firebase from 'firebase';
 
@@ -15,6 +16,7 @@ const AppContainer = createAppContainer(
       }),
     },
     CreateEvent: CreateEventScreen,
+    InvitePeople: InvitePeopleScreen,
   })
 );
 
