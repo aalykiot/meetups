@@ -9,6 +9,9 @@ import {
 import { Input, Button, ListItem } from 'react-native-elements';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import moment from 'moment';
+import short from 'short-uuid';
+
+import firebase from '../services/firebase';
 
 class CreateEventScreen extends Component {
   static navigationOptions = {
@@ -24,6 +27,7 @@ class CreateEventScreen extends Component {
       location: '',
       date: undefined,
       invites: [],
+      creating: false,
     };
   }
 
@@ -39,6 +43,33 @@ class CreateEventScreen extends Component {
       this.setState(prevState => ({
         invites: prevState.invites.filter(item => item.id !== user.id),
       }));
+    }
+  };
+
+  submit = async () => {
+    const { title, description, location, date, invites } = this.state;
+    const uid = firebase.auth().currentUser.uid;
+
+    if (title !== '' && description !== '' && location !== '' && date) {
+      this.setState({ creating: true });
+
+      const unixDate = moment(date).unix();
+      const eventId = short().new();
+
+      await firebase
+        .firestore()
+        .collection('events')
+        .doc(eventId)
+        .set({
+          owner: uid,
+          title,
+          description,
+          location,
+          date: unixDate,
+          going: [],
+        });
+
+      this.setState({ creating: false });
     }
   };
 
@@ -112,6 +143,8 @@ class CreateEventScreen extends Component {
           title="Create the event"
           buttonStyle={styles.button}
           containerStyle={styles.buttonContainer}
+          onPress={() => this.submit()}
+          loading={this.state.creating}
         />
         <DateTimePicker
           isVisible={this.state.isDateTimePickerVisible}
@@ -159,6 +192,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: 'bold',
     paddingLeft: 25,
+    paddingRight: 25,
   },
 });
 

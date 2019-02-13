@@ -5,6 +5,7 @@ import {
   FlatList,
   ActivityIndicator,
   Alert,
+  Text,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
@@ -32,8 +33,15 @@ class GoingEventsScreen extends Component {
         .collection('users')
         .doc(userId)
         .onSnapshot(doc => {
-          const { events } = doc.data();
-          const tempData = new Array();
+          const { events } = doc.data() || [];
+          if (events.length === 0) {
+            this.setState({ data: events });
+            if (!this.state.initialized) {
+              this.setState({ initialized: true });
+            }
+            return;
+          }
+          const tempData = [];
           events.reverse().forEach(async (eventId, index) => {
             const eventDoc = await firebase
               .firestore()
@@ -49,7 +57,7 @@ class GoingEventsScreen extends Component {
                 location,
                 date,
               });
-              if (index === events.length - 1) {
+              if (index === events.length - 1 || events.length === 0) {
                 this.setState({ data: tempData });
                 if (!this.state.initialized) {
                   this.setState({ initialized: true });
@@ -66,6 +74,34 @@ class GoingEventsScreen extends Component {
     }
   }
 
+  renderEvents = () => {
+    const { data } = this.state;
+    if (data.length === 0) {
+      return (
+        <View
+          style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
+        >
+          <Icon name="md-sad" size={100} style={{ marginBottom: 20 }} />
+          <Text style={{ fontSize: 20 }}>No events found</Text>
+        </View>
+      );
+    } else {
+      <FlatList
+        data={this.state.data}
+        renderItem={({ item, index }) => (
+          <View>
+            <Card
+              title={item.title}
+              description={item.description}
+              location={item.location}
+              date={item.date}
+            />
+          </View>
+        )}
+      />;
+    }
+  };
+
   render() {
     if (!this.state.initialized) {
       return (
@@ -77,23 +113,7 @@ class GoingEventsScreen extends Component {
       );
     }
 
-    return (
-      <View style={styles.container}>
-        <FlatList
-          data={this.state.data}
-          renderItem={({ item, index }) => (
-            <View>
-              <Card
-                title={item.title}
-                description={item.description}
-                location={item.location}
-                date={item.date}
-              />
-            </View>
-          )}
-        />
-      </View>
-    );
+    return <View style={styles.container}>{this.renderEvents()}</View>;
   }
 }
 
