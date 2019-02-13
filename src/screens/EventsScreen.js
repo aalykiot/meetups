@@ -39,12 +39,14 @@ const AppContainer = createAppContainer(
 class EventsScreen extends Component {
   static navigationOptions = ({ navigation }) => ({
     headerRight: (
-      <Icon
-        name="md-add-circle"
-        style={{ marginRight: 15 }}
-        size={30}
-        color="#e74c3c"
-      />
+      <TouchableOpacity onPress={() => navigation.navigate('CreateEvent')}>
+        <Icon
+          name="md-add-circle"
+          style={{ marginRight: 15 }}
+          size={30}
+          color="#e74c3c"
+        />
+      </TouchableOpacity>
     ),
   });
 

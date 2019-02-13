@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 import { createAppContainer, createStackNavigator } from 'react-navigation';
 
 import EventsScreen from './EventsScreen';
+import CreateEventScreen from './CreateEventScreen';
+
+import firebase from 'firebase';
 
 const AppContainer = createAppContainer(
   createStackNavigator({
@@ -11,6 +14,7 @@ const AppContainer = createAppContainer(
         title: 'Meetups',
       }),
     },
+    CreateEvent: CreateEventScreen,
   })
 );
 

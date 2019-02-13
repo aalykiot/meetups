@@ -49,6 +49,8 @@ class SignUpScreen extends Component {
           id: profile.user.uid,
           email: profile.user.email,
           fullName: name,
+          events: [],
+          invites: []
         });
 
       this.props.navigation.navigate('App');

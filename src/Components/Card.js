@@ -14,10 +14,6 @@ const Card = props => (
       <Text style={{ fontWeight: 'bold' }}>Date</Text>
       <Text>{props.date}</Text>
     </View>
-    <View style={{ marginBottom: 10 }}>
-      <Text style={{ fontWeight: 'bold' }}>Going</Text>
-      <Text>{props.going} people</Text>
-    </View>
     <Button
       icon={
         <Icon
