@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 import { createAppContainer, createBottomTabNavigator } from 'react-navigation';
@@ -26,7 +26,6 @@ const AppContainer = createAppContainer(
             iconName = 'md-notifications';
           }
 
-          // You can return any component that you like here!
           return <IconComponent name={iconName} size={30} color={tintColor} />;
         },
       }),
@@ -38,7 +37,7 @@ const AppContainer = createAppContainer(
 );
 
 class EventsScreen extends Component {
-  static navigationOptions = {
+  static navigationOptions = ({ navigation }) => ({
     headerRight: (
       <Icon
         name="md-add-circle"
@@ -47,7 +46,7 @@ class EventsScreen extends Component {
         color="#e74c3c"
       />
     ),
-  };
+  });
 
   render() {
     return <AppContainer />;
