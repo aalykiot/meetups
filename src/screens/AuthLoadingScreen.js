@@ -11,13 +11,15 @@ class AuthLoadingScreen extends Component {
 
   _init = async () => {
     const user = firebase.auth().currentUser;
-    this.props.navigation.navigate(user ? 'App' : 'Auth');
+    firebase.auth().onAuthStateChanged(user => {
+      this.props.navigation.navigate(user ? 'App' : 'Auth');
+    });
   };
 
   render() {
     return (
       <View style={styles.container}>
-        <ActivityIndicator />
+        <ActivityIndicator size="large" color="#e74c3c" />
       </View>
     );
   }
@@ -26,6 +28,8 @@ class AuthLoadingScreen extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

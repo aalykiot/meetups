@@ -1,22 +1,27 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import { createAppContainer, createStackNavigator } from 'react-navigation';
+
+import EventsScreen from './EventsScreen';
+
+const AppContainer = createAppContainer(
+  createStackNavigator({
+    Events: {
+      screen: EventsScreen,
+      navigationOptions: ({ navigation }) => ({
+        title: 'Meetups',
+      }),
+    },
+  })
+);
 
 class HomeScreen extends Component {
+  static navigationOptions = {
+    header: null,
+  };
+
   render() {
-    return (
-      <View style={styles.container}>
-        <Text>Home</Text>
-      </View>
-    );
+    return <AppContainer />;
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});
 
 export default HomeScreen;
