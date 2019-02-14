@@ -5,6 +5,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   FlatList,
+  Alert,
 } from 'react-native';
 import { Input, Button, ListItem } from 'react-native-elements';
 import DateTimePicker from 'react-native-modal-datetime-picker';
@@ -56,20 +57,63 @@ class CreateEventScreen extends Component {
       const unixDate = moment(date).unix();
       const eventId = short().new();
 
-      await firebase
-        .firestore()
-        .collection('events')
-        .doc(eventId)
-        .set({
-          owner: uid,
-          title,
-          description,
-          location,
-          date: unixDate,
-          going: [],
+      try {
+        await firebase
+          .firestore()
+          .collection('events')
+          .doc(eventId)
+          .set({
+            owner: uid,
+            title,
+            description,
+            location,
+            date: unixDate,
+            going: [],
+          });
+
+        const ownerData = await firebase
+          .firestore()
+          .collection('users')
+          .doc(uid)
+          .get();
+        if (ownerData.exists) {
+          await firebase
+            .firestore()
+            .collection('users')
+            .doc(uid)
+            .set({
+              ...ownerData.data(),
+              events: [...ownerData.data().invites, eventId],
+            });
+        }
+
+        invites.forEach(async user => {
+          const userData = await firebase
+            .firestore()
+            .collection('users')
+            .doc(user.id)
+            .get();
+          if (userData.exists) {
+            await firebase
+              .firestore()
+              .collection('users')
+              .doc(user.id)
+              .set({
+                ...userData.data(),
+                invites: [...userData.data().invites, eventId],
+              });
+          }
         });
 
-      this.setState({ creating: false });
+        this.setState({ creating: false });
+
+        this.props.navigation.goBack();
+      } catch (err) {
+        Alert.alert(
+          'Creation failed',
+          'Unable to create the event. Try again later.'
+        );
+      }
     }
   };
 

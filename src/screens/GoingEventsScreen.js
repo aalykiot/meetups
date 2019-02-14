@@ -8,6 +8,7 @@ import {
   Text,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import moment from 'moment';
 
 import firebase from '../services/firebase';
 import Card from '../Components/Card';
@@ -58,7 +59,11 @@ class GoingEventsScreen extends Component {
                 date,
               });
               if (index === events.length - 1 || events.length === 0) {
-                this.setState({ data: tempData });
+                this.setState({
+                  data: tempData.filter(
+                    event => moment(new Date()).unix() <= event.date
+                  ),
+                });
                 if (!this.state.initialized) {
                   this.setState({ initialized: true });
                 }
@@ -86,19 +91,21 @@ class GoingEventsScreen extends Component {
         </View>
       );
     } else {
-      <FlatList
-        data={this.state.data}
-        renderItem={({ item, index }) => (
-          <View>
-            <Card
-              title={item.title}
-              description={item.description}
-              location={item.location}
-              date={item.date}
-            />
-          </View>
-        )}
-      />;
+      return (
+        <FlatList
+          data={this.state.data}
+          renderItem={({ item, index }) => (
+            <View>
+              <Card
+                title={item.title}
+                description={item.description}
+                location={item.location}
+                date={moment.unix(item.date).format('DD/MM/YYYY - hh:mm')}
+              />
+            </View>
+          )}
+        />
+      );
     }
   };
 
