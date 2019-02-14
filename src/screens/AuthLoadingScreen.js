@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { View, ActivityIndicator, StyleSheet, Text } from 'react-native';
+import RNCalendarEvents from 'react-native-calendar-events';
 
 import firebase from '../services/firebase';
 

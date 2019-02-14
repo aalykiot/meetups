@@ -7,6 +7,7 @@ import {
   ActivityIndicator,
   FlatList,
   Alert,
+  ToastAndroid,
 } from 'react-native';
 import {
   Card as RnCard,
@@ -15,6 +16,8 @@ import {
   ButtonGroup,
 } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/Ionicons';
+import RNCalendarEvents from 'react-native-calendar-events';
+import moment from 'moment';
 
 import firebase from '../services/firebase';
 
@@ -90,12 +93,23 @@ class InviteCard extends Component {
   };
 
   handleInvite = async type => {
+    const fulfilled = await RNCalendarEvents.authorizationStatus();
+
     const accepted = type === 0;
-    const { id } = this.props;
+    const { id, title, startDate, endDate, location } = this.props;
     const userId = firebase.auth().currentUser.uid;
 
     try {
       if (accepted) {
+        if (fulfilled === 'undetermined' || fulfilled === 'denied') {
+          const status = await RNCalendarEvents.authorizeEventStore();
+          if (status === 'denied' || status === 'undetermined') {
+            Alert.alert(
+              'Calendar access required',
+              'You have to grand the app, calendar access in order to accept invitations'
+            );
+          }
+        }
         const eventDoc = await firebase
           .firestore()
           .collection('events')
@@ -113,6 +127,22 @@ class InviteCard extends Component {
               ...eventDoc.data(),
               going: [...going, userId],
             });
+
+          await RNCalendarEvents.saveEvent(title, {
+            isDetached: true,
+            location: location,
+            alarms: [{ date: 60 }, { date: 1440 }],
+            startDate: moment(
+              Number.parseInt(startDate, 10) * 1000
+            ).toISOString(),
+            endDate: moment(Number.parseInt(endDate, 10) * 1000).toISOString(),
+          });
+
+          ToastAndroid.showWithGravity(
+            'Event added to calendar!',
+            ToastAndroid.SHORT,
+            ToastAndroid.CENTER
+          );
         }
       }
 
@@ -173,8 +203,23 @@ class InviteCard extends Component {
               flexDirection: 'row',
             }}
           >
-            <Text style={{ fontWeight: 'bold', marginRight: 15 }}>Date</Text>
-            <Text>{this.props.date}</Text>
+            <Text style={{ fontWeight: 'bold', marginRight: 15 }}>
+              Starting
+            </Text>
+            <Text>
+              {moment.unix(this.props.startDate).format('DD/MM/YYYY - hh:mm')}
+            </Text>
+          </View>
+          <View
+            style={{
+              marginBottom: 10,
+              flexDirection: 'row',
+            }}
+          >
+            <Text style={{ fontWeight: 'bold', marginRight: 15 }}>Ending</Text>
+            <Text>
+              {moment.unix(this.props.endDate).format('DD/MM/YYYY - hh:mm')}
+            </Text>
           </View>
           <View style={{ marginBottom: 10 }}>
             <TouchableOpacity

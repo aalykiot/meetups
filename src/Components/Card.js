@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { Card as RnCard, Button, ListItem } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/Ionicons';
+import moment from 'moment';
 
 import firebase from '../services/firebase';
 
@@ -105,8 +106,21 @@ class Card extends Component {
               flexDirection: 'row',
             }}
           >
-            <Text style={{ fontWeight: 'bold', marginRight: 15 }}>Date</Text>
-            <Text>{this.props.date}</Text>
+            <Text style={{ fontWeight: 'bold', marginRight: 15 }}>Staring</Text>
+            <Text>
+              {moment.unix(this.props.startDate).format('DD/MM/YYYY - hh:mm')}
+            </Text>
+          </View>
+          <View
+            style={{
+              marginBottom: 10,
+              flexDirection: 'row',
+            }}
+          >
+            <Text style={{ fontWeight: 'bold', marginRight: 15 }}>Ending</Text>
+            <Text>
+              {moment.unix(this.props.endDate).format('DD/MM/YYYY - hh:mm')}
+            </Text>
           </View>
           <View style={{ marginBottom: 10 }}>
             <TouchableOpacity

@@ -23,10 +23,12 @@ class CreateEventScreen extends Component {
     super(props);
     this.state = {
       isDateTimePickerVisible: false,
+      dateIndex: 0,
       title: '',
       description: '',
       location: '',
-      date: undefined,
+      startDate: undefined,
+      endDate: undefined,
       invites: [],
       creating: false,
     };
@@ -48,13 +50,22 @@ class CreateEventScreen extends Component {
   };
 
   submit = async () => {
-    const { title, description, location, date, invites } = this.state;
+    const {
+      title,
+      description,
+      location,
+      startDate,
+      endDate,
+      invites,
+    } = this.state;
     const uid = firebase.auth().currentUser.uid;
 
-    if (title !== '' && description !== '' && location !== '' && date) {
+    if (
+      (title !== '' && description !== '' && location !== '' && startDate,
+      endDate)
+    ) {
       this.setState({ creating: true });
 
-      const unixDate = moment(date).unix();
       const eventId = short().new();
 
       try {
@@ -67,7 +78,8 @@ class CreateEventScreen extends Component {
             title,
             description,
             location,
-            date: unixDate,
+            startDate: moment(startDate).unix(),
+            endDate: moment(endDate).unix(),
             going: [],
           });
 
@@ -115,11 +127,20 @@ class CreateEventScreen extends Component {
     }
   };
 
-  render() {
-    const txt = this.state.date
-      ? this.state.date.toString()
-      : 'Add date and starting time';
+  renderDateString = index => {
+    const { startDate, endDate } = this.state;
+    if (index === 0) {
+      return this.state.startDate
+        ? this.state.startDate.toString()
+        : 'Set starting date';
+    } else {
+      return this.state.endDate
+        ? this.state.endDate.toString()
+        : 'Set ending date';
+    }
+  };
 
+  render() {
     return (
       <View style={styles.container}>
         <Input
@@ -142,9 +163,19 @@ class CreateEventScreen extends Component {
         />
 
         <TouchableOpacity
-          onPress={() => this.setState({ isDateTimePickerVisible: true })}
+          onPress={() =>
+            this.setState({ isDateTimePickerVisible: true, dateIndex: 0 })
+          }
         >
-          <Text style={styles.link}>{txt}</Text>
+          <Text style={styles.link}>{this.renderDateString(0)}</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={() =>
+            this.setState({ isDateTimePickerVisible: true, dateIndex: 1 })
+          }
+        >
+          <Text style={styles.link}>{this.renderDateString(1)}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -192,7 +223,14 @@ class CreateEventScreen extends Component {
           isVisible={this.state.isDateTimePickerVisible}
           mode="datetime"
           minimumDate={new Date()}
-          onConfirm={date => this.setState({ date })}
+          onConfirm={date => {
+            const { dateIndex } = this.state;
+            if (dateIndex === 0) {
+              this.setState({ startDate: date });
+            } else {
+              this.setState({ endDate: date });
+            }
+          }}
           onHideAfterConfirm={() =>
             this.setState({ isDateTimePickerVisible: false })
           }

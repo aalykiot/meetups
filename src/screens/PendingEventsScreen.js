@@ -55,7 +55,8 @@ class PendingEventsScreen extends Component {
                 title,
                 description,
                 location,
-                date,
+                startDate,
+                endDate,
                 going,
                 creator,
               } = eventDoc.data();
@@ -64,13 +65,14 @@ class PendingEventsScreen extends Component {
                 title,
                 description,
                 location,
-                date,
+                startDate,
+                endDate,
                 creator,
                 peopleGoing: going,
               });
             }
             tempData = tempData.filter(
-              event => moment(new Date()).unix() <= event.date
+              event => moment(new Date()).unix() <= event.startDate
             );
 
             if (index === invites.length - 1 || tempData.length === 0) {
@@ -114,7 +116,8 @@ class PendingEventsScreen extends Component {
               location={item.location}
               peopleGoing={item.peopleGoing}
               creator={item.creator}
-              date={moment.unix(item.date).format('DD/MM/YYYY - hh:mm')}
+              startDate={item.startDate}
+              endDate={item.endDate}
             />
           )}
         />
