@@ -43,7 +43,7 @@ class GoingEventsScreen extends Component {
             }
             return;
           }
-          const tempData = [];
+          let tempData = [];
           events.reverse().forEach(async (eventId, index) => {
             const eventDoc = await firebase
               .firestore()
@@ -68,15 +68,17 @@ class GoingEventsScreen extends Component {
                 creator,
                 peopleGoing: going,
               });
-              if (index === events.length - 1 || events.length === 0) {
-                this.setState({
-                  data: tempData.filter(
-                    event => moment(new Date()).unix() <= event.date
-                  ),
-                });
-                if (!this.state.initialized) {
-                  this.setState({ initialized: true });
-                }
+            }
+            tempData = tempData.filter(
+              event => moment(new Date()).unix() <= event.date
+            );
+
+            if (index === events.length - 1 || tempData.length === 0) {
+              this.setState({
+                data: tempData,
+              });
+              if (!this.state.initialized) {
+                this.setState({ initialized: true });
               }
             }
           });
