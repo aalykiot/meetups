@@ -85,18 +85,20 @@ class InvitePeopleScreen extends Component {
                   : '#95a5a6',
               }}
               onPress={() => {
-                if (localInvites.some(userId => userId === item.id)) {
-                  this.setState(prevState => ({
-                    localInvites: prevState.localInvites.filter(
-                      userId => userId !== item.id
-                    ),
-                  }));
-                } else {
-                  this.setState(prevState => ({
-                    localInvites: [...prevState.localInvites, item.id],
-                  }));
+                if (item.id !== firebase.auth().currentUser.uid) {
+                  if (localInvites.some(userId => userId === item.id)) {
+                    this.setState(prevState => ({
+                      localInvites: prevState.localInvites.filter(
+                        userId => userId !== item.id
+                      ),
+                    }));
+                  } else {
+                    this.setState(prevState => ({
+                      localInvites: [...prevState.localInvites, item.id],
+                    }));
+                  }
+                  addUserToInvites(item);
                 }
-                addUserToInvites(item);
               }}
             />
           )}

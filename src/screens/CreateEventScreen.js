@@ -105,8 +105,6 @@ class CreateEventScreen extends Component {
           }
         });
 
-        this.setState({ creating: false });
-
         this.props.navigation.goBack();
       } catch (err) {
         Alert.alert(

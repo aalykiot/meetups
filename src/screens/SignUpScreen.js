@@ -50,15 +50,13 @@ class SignUpScreen extends Component {
           email: profile.user.email,
           fullName: name,
           events: [],
-          invites: []
+          invites: [],
         });
 
       this.props.navigation.navigate('App');
     } catch (err) {
       Alert.alert('Sign up failed', err.message);
     }
-
-    this.setState({ loading: false });
   }
 
   render() {
