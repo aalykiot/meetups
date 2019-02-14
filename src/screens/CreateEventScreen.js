@@ -63,7 +63,7 @@ class CreateEventScreen extends Component {
           .collection('events')
           .doc(eventId)
           .set({
-            owner: uid,
+            creator: uid,
             title,
             description,
             location,
@@ -71,19 +71,19 @@ class CreateEventScreen extends Component {
             going: [],
           });
 
-        const ownerData = await firebase
+        const creatorData = await firebase
           .firestore()
           .collection('users')
           .doc(uid)
           .get();
-        if (ownerData.exists) {
+        if (creatorData.exists) {
           await firebase
             .firestore()
             .collection('users')
             .doc(uid)
             .set({
-              ...ownerData.data(),
-              events: [...ownerData.data().invites, eventId],
+              ...creatorData.data(),
+              events: [...creatorData.data().invites, eventId],
             });
         }
 
@@ -168,7 +168,7 @@ class CreateEventScreen extends Component {
               title={item.fullName}
               subtitle={item.email}
               leftIcon={{
-                name: 'md-checkmark-circle-outline',
+                name: 'md-send',
                 type: 'ionicon',
                 size: 35,
                 color: '#e74c3c',

@@ -77,7 +77,7 @@ class InvitePeopleScreen extends Component {
               title={item.fullName}
               subtitle={item.email}
               leftIcon={{
-                name: 'md-checkmark-circle-outline',
+                name: 'md-send',
                 type: 'ionicon',
                 size: 35,
                 color: localInvites.some(userId => userId === item.id)

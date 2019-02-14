@@ -6,6 +6,7 @@ import {
   ActivityIndicator,
   Alert,
   Text,
+  TouchableOpacity,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import moment from 'moment';
@@ -50,13 +51,22 @@ class GoingEventsScreen extends Component {
               .doc(eventId)
               .get();
             if (eventDoc.exists) {
-              const { title, description, location, date } = eventDoc.data();
+              const {
+                title,
+                description,
+                location,
+                date,
+                going,
+                creator,
+              } = eventDoc.data();
               tempData.push({
                 id: eventId,
                 title,
                 description,
                 location,
                 date,
+                creator,
+                peopleGoing: going,
               });
               if (index === events.length - 1 || events.length === 0) {
                 this.setState({
@@ -95,14 +105,14 @@ class GoingEventsScreen extends Component {
         <FlatList
           data={this.state.data}
           renderItem={({ item, index }) => (
-            <View>
-              <Card
-                title={item.title}
-                description={item.description}
-                location={item.location}
-                date={moment.unix(item.date).format('DD/MM/YYYY - hh:mm')}
-              />
-            </View>
+            <Card
+              title={item.title}
+              description={item.description}
+              location={item.location}
+              peopleGoing={item.peopleGoing}
+              creator={item.creator}
+              date={moment.unix(item.date).format('DD/MM/YYYY - hh:mm')}
+            />
           )}
         />
       );

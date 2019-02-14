@@ -34,8 +34,6 @@ class SignInScreen extends Component {
     } catch (err) {
       Alert.alert('Sign in failed', err.message);
     }
-
-    this.setState({ loading: false });
   }
 
   render() {
