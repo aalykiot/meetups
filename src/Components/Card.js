@@ -88,12 +88,24 @@ class Card extends Component {
       <RnCard containerStyle={{ marginBottom: 10 }} title={this.props.title}>
         <View style={{ flex: 1 }}>
           <Text style={{ marginBottom: 10 }}>{this.props.description}</Text>
-          <View style={{ marginBottom: 10 }}>
-            <Text style={{ fontWeight: 'bold' }}>Location</Text>
+          <View
+            style={{
+              marginBottom: 10,
+              flexDirection: 'row',
+            }}
+          >
+            <Text style={{ fontWeight: 'bold', marginRight: 15 }}>
+              Location
+            </Text>
             <Text>{this.props.location}</Text>
           </View>
-          <View style={{ marginBottom: 10 }}>
-            <Text style={{ fontWeight: 'bold' }}>Date</Text>
+          <View
+            style={{
+              marginBottom: 10,
+              flexDirection: 'row',
+            }}
+          >
+            <Text style={{ fontWeight: 'bold', marginRight: 15 }}>Date</Text>
             <Text>{this.props.date}</Text>
           </View>
           <View style={{ marginBottom: 10 }}>
