@@ -93,21 +93,21 @@ class InviteCard extends Component {
   };
 
   handleInvite = async type => {
-    const fulfilled = await RNCalendarEvents.authorizationStatus();
-
     const accepted = type === 0;
     const { id, title, startDate, endDate, location } = this.props;
     const userId = firebase.auth().currentUser.uid;
 
     try {
       if (accepted) {
+        const fulfilled = await RNCalendarEvents.authorizationStatus();
         if (fulfilled === 'undetermined' || fulfilled === 'denied') {
           const status = await RNCalendarEvents.authorizeEventStore();
           if (status === 'denied' || status === 'undetermined') {
             Alert.alert(
               'Calendar access required',
-              'You have to grand the app, calendar access in order to accept invitations'
+              'You have to grand the app, calendar access in order to create evets or accept invitations'
             );
+            return;
           }
         }
         const eventDoc = await firebase
@@ -201,22 +201,19 @@ class InviteCard extends Component {
             style={{
               marginBottom: 10,
               flexDirection: 'row',
+              alignItems: 'center',
             }}
           >
-            <Text style={{ fontWeight: 'bold', marginRight: 15 }}>
-              Starting
-            </Text>
+            <Text style={{ fontWeight: 'bold', marginRight: 15 }}>Date</Text>
             <Text>
               {moment.unix(this.props.startDate).format('DD/MM/YYYY - hh:mm')}
             </Text>
-          </View>
-          <View
-            style={{
-              marginBottom: 10,
-              flexDirection: 'row',
-            }}
-          >
-            <Text style={{ fontWeight: 'bold', marginRight: 15 }}>Ending</Text>
+            <Icon
+              name="md-arrow-forward"
+              style={{ paddingLeft: 10, paddingRight: 10 }}
+              size={13}
+              color="#000"
+            />
             <Text>
               {moment.unix(this.props.endDate).format('DD/MM/YYYY - hh:mm')}
             </Text>

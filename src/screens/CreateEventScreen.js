@@ -6,11 +6,13 @@ import {
   TouchableOpacity,
   FlatList,
   Alert,
+  ToastAndroid,
 } from 'react-native';
 import { Input, Button, ListItem } from 'react-native-elements';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import moment from 'moment';
 import short from 'short-uuid';
+import RNCalendarEvents from 'react-native-calendar-events';
 
 import firebase from '../services/firebase';
 
@@ -64,6 +66,18 @@ class CreateEventScreen extends Component {
       (title !== '' && description !== '' && location !== '' && startDate,
       endDate)
     ) {
+      const fulfilled = await RNCalendarEvents.authorizationStatus();
+      if (fulfilled === 'undetermined' || fulfilled === 'denied') {
+        const status = await RNCalendarEvents.authorizeEventStore();
+        if (status === 'denied' || status === 'undetermined') {
+          Alert.alert(
+            'Calendar access required',
+            'You have to grand the app, calendar access in order to create evets or accept invitations'
+          );
+          return;
+        }
+      }
+
       this.setState({ creating: true });
 
       const eventId = short().new();
@@ -117,12 +131,31 @@ class CreateEventScreen extends Component {
           }
         });
 
+        await RNCalendarEvents.saveEvent(title, {
+          isDetached: true,
+          location: location,
+          alarms: [{ date: 60 }, { date: 1440 }],
+          startDate: moment(
+            Number.parseInt(moment(startDate).unix(), 10) * 1000
+          ).toISOString(),
+          endDate: moment(
+            Number.parseInt(moment(endDate).unix(), 10) * 1000
+          ).toISOString(),
+        });
+
+        ToastAndroid.showWithGravity(
+          'Event added to calendar!',
+          ToastAndroid.SHORT,
+          ToastAndroid.CENTER
+        );
+
         this.props.navigation.goBack();
       } catch (err) {
         Alert.alert(
           'Creation failed',
           'Unable to create the event. Try again later.'
         );
+        console.log(err);
       }
     }
   };

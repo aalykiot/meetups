@@ -104,20 +104,19 @@ class Card extends Component {
             style={{
               marginBottom: 10,
               flexDirection: 'row',
+              alignItems: 'center',
             }}
           >
-            <Text style={{ fontWeight: 'bold', marginRight: 15 }}>Staring</Text>
+            <Text style={{ fontWeight: 'bold', marginRight: 15 }}>Date</Text>
             <Text>
               {moment.unix(this.props.startDate).format('DD/MM/YYYY - hh:mm')}
             </Text>
-          </View>
-          <View
-            style={{
-              marginBottom: 10,
-              flexDirection: 'row',
-            }}
-          >
-            <Text style={{ fontWeight: 'bold', marginRight: 15 }}>Ending</Text>
+            <Icon
+              name="md-arrow-forward"
+              style={{ paddingLeft: 10, paddingRight: 10 }}
+              size={13}
+              color="#000"
+            />
             <Text>
               {moment.unix(this.props.endDate).format('DD/MM/YYYY - hh:mm')}
             </Text>
